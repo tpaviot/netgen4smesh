@@ -1,0 +1,81 @@
+Determining if files dlfcn.h exist failed with the following output:
+Change Dir: D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp
+
+Run Build Command:"D:/mingw32-5.4.0/bin/mingw32-make.exe" "cmTC_f8a07/fast"
+D:/mingw32-5.4.0/bin/mingw32-make.exe -f CMakeFiles\cmTC_f8a07.dir\build.make CMakeFiles/cmTC_f8a07.dir/build
+mingw32-make.exe[1]: Entering directory 'D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_f8a07.dir/CheckIncludeFiles.c.obj
+D:\mingw32-5.4.0\bin\gcc.exe     -o CMakeFiles\cmTC_f8a07.dir\CheckIncludeFiles.c.obj   -c D:\Devel\netgen-mesher-git\cmake-build\CMakeFiles\CMakeTmp\CheckIncludeFiles.c
+D:\Devel\netgen-mesher-git\cmake-build\CMakeFiles\CMakeTmp\CheckIncludeFiles.c:2:19: fatal error: dlfcn.h: No such file or directory
+compilation terminated.
+CMakeFiles\cmTC_f8a07.dir\build.make:64: recipe for target 'CMakeFiles/cmTC_f8a07.dir/CheckIncludeFiles.c.obj' failed
+mingw32-make.exe[1]: *** [CMakeFiles/cmTC_f8a07.dir/CheckIncludeFiles.c.obj] Error 1
+mingw32-make.exe[1]: Leaving directory 'D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp'
+Makefile:125: recipe for target 'cmTC_f8a07/fast' failed
+mingw32-make.exe: *** [cmTC_f8a07/fast] Error 2
+
+Source:
+/* */
+#include <dlfcn.h>
+
+
+int main(void){return 0;}
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp
+
+Run Build Command:"D:/mingw32-5.4.0/bin/mingw32-make.exe" "cmTC_35a70/fast"
+D:/mingw32-5.4.0/bin/mingw32-make.exe -f CMakeFiles\cmTC_35a70.dir\build.make CMakeFiles/cmTC_35a70.dir/build
+mingw32-make.exe[1]: Entering directory 'D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_35a70.dir/CheckSymbolExists.c.obj
+D:\mingw32-5.4.0\bin\gcc.exe     -o CMakeFiles\cmTC_35a70.dir\CheckSymbolExists.c.obj   -c D:\Devel\netgen-mesher-git\cmake-build\CMakeFiles\CMakeTmp\CheckSymbolExists.c
+Linking C executable cmTC_35a70.exe
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTC_35a70.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\cmTC_35a70.dir/objects.a
+D:\mingw32-5.4.0\bin\ar.exe cr CMakeFiles\cmTC_35a70.dir/objects.a @CMakeFiles\cmTC_35a70.dir\objects1.rsp
+D:\mingw32-5.4.0\bin\gcc.exe       -Wl,--whole-archive CMakeFiles\cmTC_35a70.dir/objects.a -Wl,--no-whole-archive  -o cmTC_35a70.exe -Wl,--out-implib,libcmTC_35a70.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmTC_35a70.dir\linklibs.rsp
+CMakeFiles\cmTC_35a70.dir/objects.a(CheckSymbolExists.c.obj):CheckSymbolExists.c:(.text+0x12): undefined reference to `pthread_create'
+collect2.exe: error: ld returned 1 exit status
+CMakeFiles\cmTC_35a70.dir\build.make:98: recipe for target 'cmTC_35a70.exe' failed
+mingw32-make.exe[1]: *** [cmTC_35a70.exe] Error 1
+mingw32-make.exe[1]: Leaving directory 'D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp'
+Makefile:125: recipe for target 'cmTC_35a70/fast' failed
+mingw32-make.exe: *** [cmTC_35a70/fast] Error 2
+
+File D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp
+
+Run Build Command:"D:/mingw32-5.4.0/bin/mingw32-make.exe" "cmTC_50215/fast"
+D:/mingw32-5.4.0/bin/mingw32-make.exe -f CMakeFiles\cmTC_50215.dir\build.make CMakeFiles/cmTC_50215.dir/build
+mingw32-make.exe[1]: Entering directory 'D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_50215.dir/CheckFunctionExists.c.obj
+D:\mingw32-5.4.0\bin\gcc.exe    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles\cmTC_50215.dir\CheckFunctionExists.c.obj   -c "C:\Program Files (x86)\CMake\share\cmake-3.7\Modules\CheckFunctionExists.c"
+Linking C executable cmTC_50215.exe
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTC_50215.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\cmTC_50215.dir/objects.a
+D:\mingw32-5.4.0\bin\ar.exe cr CMakeFiles\cmTC_50215.dir/objects.a @CMakeFiles\cmTC_50215.dir\objects1.rsp
+D:\mingw32-5.4.0\bin\gcc.exe   -DCHECK_FUNCTION_EXISTS=pthread_create    -Wl,--whole-archive CMakeFiles\cmTC_50215.dir/objects.a -Wl,--no-whole-archive  -o cmTC_50215.exe -Wl,--out-implib,libcmTC_50215.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmTC_50215.dir\linklibs.rsp
+D:/mingw32-5.4.0/bin/../lib/gcc/i686-w64-mingw32/5.4.0/../../../../i686-w64-mingw32/bin/ld.exe: cannot find -lpthreads
+collect2.exe: error: ld returned 1 exit status
+CMakeFiles\cmTC_50215.dir\build.make:98: recipe for target 'cmTC_50215.exe' failed
+mingw32-make.exe[1]: *** [cmTC_50215.exe] Error 1
+mingw32-make.exe[1]: Leaving directory 'D:/Devel/netgen-mesher-git/cmake-build/CMakeFiles/CMakeTmp'
+Makefile:125: recipe for target 'cmTC_50215/fast' failed
+mingw32-make.exe: *** [cmTC_50215/fast] Error 2
+
+

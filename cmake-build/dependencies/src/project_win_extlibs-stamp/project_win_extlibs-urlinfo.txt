@@ -1,0 +1,3 @@
+repository='external project URL'
+module='http://www.asc.tuwien.ac.at/~mhochsteger/ngsuite/ext_libs32.zip'
+tag=''

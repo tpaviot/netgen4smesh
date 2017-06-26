@@ -1,0 +1,1 @@
+C:/Python27/DLLs/tcl85.dll C:/Python27/DLLs/tk85.dll -lglu32 -lopengl32 -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
