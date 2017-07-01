@@ -20,7 +20,9 @@
 // in the configure/make phases, with the 
 // right version number
 #ifdef WIN32
+#ifndef PACKAGE_VERSION
 #define PACKAGE_VERSION "5.3"
+#endif
 #endif
 
 
