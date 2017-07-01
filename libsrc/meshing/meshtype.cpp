@@ -1,4 +1,5 @@
 #include <mystdlib.h>
+#include <float.h> // to get DBL_MIN defined
 
 #include "meshing.hpp"  
 
@@ -666,7 +667,8 @@ namespace netgen
 
         double det = trans.Det();
 
-        if (det <= 0)
+        // if (det <= 0)
+        if (det <= DBL_MIN) // avoid FPE
           err += 1e12;
         else
           err += frob * frob / det;
@@ -722,7 +724,8 @@ namespace netgen
 
             double det = trans(0,0)*trans(1,1)-trans(1,0)*trans(0,1);
 
-            if (det <= 0)
+            // if (det <= 0)
+            if (det <= DBL_MIN)  // avoid FPE
               {
                 dd = 0;
                 return 1e12;
@@ -806,7 +809,8 @@ namespace netgen
           = dtrans(0,0) * trans(1,1) - trans(0,1) * dtrans(1,0)
           + trans(0,0) * dtrans(1,1) - dtrans(0,1) * trans(1,0);
 
-        if (det <= 0)
+        // if (det <= 0)
+        if (det <= DBL_MIN) // avoid FPE
           err += 1e12;
         else
           {
@@ -856,7 +860,8 @@ namespace netgen
         frob /= 2;
 
         double det = trans.Det();
-        if (det <= 0)
+        //if (det <= 0)
+        if (det <= DBL_MIN) // avoid FPE
           err += 1e12;
         else
           err += frob * frob / det;
@@ -1864,7 +1869,8 @@ namespace netgen
       case PYRAMID:
         {
           double noz = 1-p(2);
-          if (noz == 0.0) noz = 1e-10;
+          //if (noz == 0.0) noz = 1e-10;
+          if (noz <= DBL_MIN) noz = 1e-10; // avoid FPE
 
           double xi  = p(0) / noz;
           double eta = p(1) / noz;
@@ -2030,7 +2036,8 @@ namespace netgen
 
         double det = -trans.Det();
       
-        if (det <= 0)
+        //if (det <= 0)
+        if (det <= DBL_MIN) // avoid FPE
           err += 1e12;
         else
           err += frob * frob * frob / det;
@@ -2102,7 +2109,8 @@ namespace netgen
         ddet *= -1;
 
       
-        if (det <= 0)
+        //if (det <= 0)
+        if (det <= DBL_MIN) // avoid FPE
           err += 1e12;
         else
           {
@@ -2184,7 +2192,7 @@ namespace netgen
       
         det *= -1;
       
-        if (det <= 0)
+        if (det <= DBL_MIN)
           err += 1e12;
         else
           {

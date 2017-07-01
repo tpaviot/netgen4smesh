@@ -47,9 +47,7 @@
 #include <TopOpeBRep_EdgesIntersector.hxx>
 #include <TopOpeBRep_Point2d.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
-#include <TopTools_MapOfShape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>

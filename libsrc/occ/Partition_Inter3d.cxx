@@ -48,7 +48,6 @@
 #include <TopOpeBRepTool_BoxSort.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Edge.hxx>
@@ -206,7 +205,7 @@ static void PutInBounds (const TopoDS_Face&          F,
   Handle (Geom_Surface) S   = BRep_Tool::Surface(F,L);
 
   if (S->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
-    S = (*(Handle_Geom_RectangularTrimmedSurface*)&S)->BasisSurface();
+    S = Handle(Geom_RectangularTrimmedSurface)::DownCast (S)->BasisSurface();
   }
   if (!S->IsUPeriodic() && !S->IsVPeriodic())
     return;

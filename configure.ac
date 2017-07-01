@@ -20,7 +20,7 @@ AC_OPENMP
 CXXFLAGS="$CXXFLAGS $OPENMP_CXXFLAGS"
 # LDFLAGS="$LDFLAGS $OPENMP_CXXFLAGS"
 
-AM_PROG_AR
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_PROG_LIBTOOL
 LT_INIT
 
@@ -42,8 +42,8 @@ AC_ARG_WITH([occ],
 
 if test a$occon = atrue ; then
 
-	AC_SUBST([OCCFLAGS], ["-DOCCGEOMETRY -I$occdir/inc -I/usr/include/opencascade"])
-	AC_SUBST([OCCLIBS], ["-L$occdir/lib -lTKernel -lTKGeomBase -lTKMath -lTKG2d -lTKG3d -lTKXSBase -lTKOffset -lTKFillet -lTKShHealing -lTKMesh -lTKMeshVS -lTKTopAlgo -lTKGeomAlgo -lTKBool -lTKPrim -lTKBO -lTKIGES -lTKBRep -lTKSTEPBase -lTKSTEP -lTKSTL -lTKSTEPAttr -lTKSTEP209 -lTKXDESTEP -lTKXDEIGES -lTKXCAF -lTKLCAF -lFWOSPlugin"])
+	AC_SUBST([OCCFLAGS], ["-DOCCGEOMETRY -I$occdir/include/opencascade"])
+	AC_SUBST([OCCLIBS], ["-L$occdir/lib -lTKernel -lTKGeomBase -lTKMath -lTKG2d -lTKG3d -lTKXSBase -lTKOffset -lTKFillet -lTKShHealing -lTKMesh -lTKMeshVS -lTKTopAlgo -lTKGeomAlgo -lTKBool -lTKPrim -lTKBO -lTKIGES -lTKBRep -lTKSTEPBase -lTKSTEP -lTKSTL -lTKSTEPAttr -lTKSTEP209 -lTKXDESTEP -lTKXDEIGES -lTKXCAF -lTKLCAF"])
 
 #  -lTKDCAF
 

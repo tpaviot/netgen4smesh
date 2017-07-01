@@ -8,6 +8,8 @@
 #include "ShapeAnalysis_CheckSmallFace.hxx"
 #include "ShapeAnalysis_DataMapOfShapeListOfReal.hxx"
 #include "ShapeAnalysis_Surface.hxx"
+#include <BRepTopAdaptor_FClass2d.hxx> // -- to optimize Project() and FastProject()
+#include <TopAbs_State.hxx>
 #include "BRepAlgoAPI_Fuse.hxx"
 #include "BRepCheck_Analyzer.hxx"
 #include "BRepLib.hxx"
@@ -16,9 +18,16 @@
 #include "ShapeFix_FixSmallFace.hxx"
 #include "Partition_Spliter.hxx"
 
-
 namespace netgen
 {
+  // free data used to optimize Project() and FastProject()
+  OCCGeometry::~OCCGeometry()
+  {
+    NCollection_DataMap<int,BRepTopAdaptor_FClass2d*>::Iterator it(fclsmap);
+    for (; it.More(); it.Next())
+      delete it.Value();
+  }
+
    void OCCGeometry :: PrintNrShapes ()
    {
       TopExp_Explorer e;
@@ -112,7 +121,7 @@ namespace netgen
       double surfacecont = 0;
 
       {
-         Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+         Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
          rebuild->Apply(shape);
          for (exp1.Init (shape, TopAbs_EDGE); exp1.More(); exp1.Next())
          {
@@ -143,7 +152,7 @@ namespace netgen
          cout << endl << "- repairing faces" << endl;
 
          Handle(ShapeFix_Face) sff;
-         Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+         Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
          rebuild->Apply(shape);
 
 
@@ -200,7 +209,7 @@ namespace netgen
 
 
       {
-         Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+         Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
          rebuild->Apply(shape);
          for (exp1.Init (shape, TopAbs_EDGE); exp1.More(); exp1.Next())
          {
@@ -217,7 +226,7 @@ namespace netgen
          cout << endl << "- fixing small edges" << endl;
 
          Handle(ShapeFix_Wire) sfw;
-         Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+         Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
          rebuild->Apply(shape);
 
 
@@ -284,7 +293,7 @@ namespace netgen
 
          {
             BuildFMap();
-            Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+            Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
             rebuild->Apply(shape);
 
             for (exp1.Init (shape, TopAbs_EDGE); exp1.More(); exp1.Next())
@@ -312,7 +321,7 @@ namespace netgen
 
 
          {
-            Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+            Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
             rebuild->Apply(shape);
             for (exp1.Init (shape, TopAbs_EDGE); exp1.More(); exp1.Next())
             {
@@ -438,7 +447,7 @@ namespace netgen
 
 
       {
-         Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+         Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
          rebuild->Apply(shape);
          for (exp1.Init (shape, TopAbs_EDGE); exp1.More(); exp1.Next())
          {
@@ -483,7 +492,7 @@ namespace netgen
                   TopoDS_Solid solid = TopoDS::Solid(exp0.Current());
                   TopoDS_Solid newsolid = solid;
                   BRepLib::OrientClosedSolid (newsolid);
-                  Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+                  Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
                   //		  rebuild->Apply(shape);
                   rebuild->Replace(solid, newsolid, Standard_False);
                   TopoDS_Shape newshape = rebuild->Apply(shape, TopAbs_COMPSOLID);//, 1);
@@ -906,7 +915,7 @@ namespace netgen
             TopoDS_Solid solid = TopoDS::Solid(exp0.Current());
             TopoDS_Solid newsolid = solid;
             BRepLib::OrientClosedSolid (newsolid);
-            Handle_ShapeBuild_ReShape rebuild = new ShapeBuild_ReShape;
+            Handle(ShapeBuild_ReShape) rebuild = new ShapeBuild_ReShape;
             rebuild->Replace(solid, newsolid, Standard_False);
 
             TopoDS_Shape newshape = rebuild->Apply(shape, TopAbs_SHAPE, 1);
@@ -951,25 +960,58 @@ namespace netgen
    }
 
 
+   // returns a projector and a classifier for the given surface
+   void OCCGeometry::GetFaceTools(int surfi, Handle(ShapeAnalysis_Surface)& proj,
+                                  BRepTopAdaptor_FClass2d*& cls) const
+   {
+     //MSV: organize caching projector in the map
+     if (fprjmap.IsBound(surfi))
+     {
+       proj = fprjmap.Find(surfi);
+       cls = fclsmap.Find(surfi);
+     }
+     else
+     {
+       const TopoDS_Face& aFace = TopoDS::Face(fmap(surfi));
+       Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+       proj = new ShapeAnalysis_Surface(aSurf);
+       fprjmap.Bind(surfi, proj);
+       cls = new BRepTopAdaptor_FClass2d(aFace,Precision::Confusion());
+       fclsmap.Bind(surfi, cls);
+     }
+   }
 
-
-   void OCCGeometry :: Project (int surfi, Point<3> & p) const
+   // void OCCGeometry :: Project (int surfi, Point<3> & p) const
+   bool OCCGeometry :: Project (int surfi, Point<3> & p, double& u, double& v) const
    {
       static int cnt = 0;
       if (++cnt % 1000 == 0) cout << "Project cnt = " << cnt << endl;
 
       gp_Pnt pnt(p(0), p(1), p(2));
 
-      double u,v;
-      Handle( Geom_Surface ) thesurf = BRep_Tool::Surface(TopoDS::Face(fmap(surfi)));
-      Handle( ShapeAnalysis_Surface ) su = new ShapeAnalysis_Surface( thesurf );
-      gp_Pnt2d suval = su->ValueOfUV ( pnt, BRep_Tool::Tolerance( TopoDS::Face(fmap(surfi)) ) );
-      suval.Coord( u, v);
-      pnt = thesurf->Value( u, v );
+      // -- Optimization: use cached projector and classifier
+      // double u,v;
+      // Handle( Geom_Surface ) thesurf = BRep_Tool::Surface(TopoDS::Face(fmap(surfi)));
+      // Handle( ShapeAnalysis_Surface ) su = new ShapeAnalysis_Surface( thesurf );
+      // gp_Pnt2d suval = su->ValueOfUV ( pnt, BRep_Tool::Tolerance( TopoDS::Face(fmap(surfi)) ) );
+      // suval.Coord( u, v);
+      // pnt = thesurf->Value( u, v );  
 
+      Handle(ShapeAnalysis_Surface) proj;
+      BRepTopAdaptor_FClass2d *cls;
+      GetFaceTools(surfi, proj, cls);
+
+      gp_Pnt2d p2d = proj->ValueOfUV(pnt, Precision::Confusion());
+      if (cls->Perform(p2d) == TopAbs_OUT)
+      {
+        return false;
+      }
+      pnt = proj->Value(p2d);
+      p2d.Coord(u, v);
 
       p = Point<3> (pnt.X(), pnt.Y(), pnt.Z());
 
+      return true;
    }
 
 
@@ -979,54 +1021,69 @@ namespace netgen
    {
       gp_Pnt p(ap(0), ap(1), ap(2));
 
-      Handle(Geom_Surface) surface = BRep_Tool::Surface(TopoDS::Face(fmap(surfi)));
+      // -- Optimization: use cached projector and classifier
+      // Handle(Geom_Surface) surface = BRep_Tool::Surface(TopoDS::Face(fmap(surfi)));
+      // 
+      // gp_Pnt x = surface->Value (u,v);
+      // 
+      // if (p.SquareDistance(x) <= sqr(PROJECTION_TOLERANCE)) return true;
+      // 
+      // gp_Vec du, dv;
+      // 
+      // surface->D1(u,v,x,du,dv);
+      // 
+      // int count = 0;
+      // 
+      // gp_Pnt xold;
+      // gp_Vec n;
+      // double det, lambda, mu;
+      // 
+      // do {
+      //    count++;
+      // 
+      //    n = du^dv;
+      // 
+      //    det = Det3 (n.X(), du.X(), dv.X(),
+      //       n.Y(), du.Y(), dv.Y(),
+      //       n.Z(), du.Z(), dv.Z());
+      // 
+      //    if (det < 1e-15) return false;
+      // 
+      //    lambda = Det3 (n.X(), p.X()-x.X(), dv.X(),
+      //       n.Y(), p.Y()-x.Y(), dv.Y(),
+      //       n.Z(), p.Z()-x.Z(), dv.Z())/det;
+      // 
+      //    mu     = Det3 (n.X(), du.X(), p.X()-x.X(),
+      //       n.Y(), du.Y(), p.Y()-x.Y(),
+      //       n.Z(), du.Z(), p.Z()-x.Z())/det;
+      // 
+      //    u += lambda;
+      //    v += mu;
+      // 
+      //    xold = x;
+      //    surface->D1(u,v,x,du,dv);
+      // 
+      // } while (xold.SquareDistance(x) > sqr(PROJECTION_TOLERANCE) && count < 50);
+      // 
+      // //    (*testout) << "FastProject count: " << count << endl;
+      // 
+      // if (count == 50) return false;
+      // 
+      // ap = Point<3> (x.X(), x.Y(), x.Z());
+      Handle(ShapeAnalysis_Surface) proj;
+      BRepTopAdaptor_FClass2d *cls;
+      GetFaceTools(surfi, proj, cls);
 
-      gp_Pnt x = surface->Value (u,v);
+      gp_Pnt2d p2d = proj->NextValueOfUV(gp_Pnt2d(u,v), p, Precision::Confusion());
+      if (cls->Perform(p2d) == TopAbs_OUT)
+      {
+        //cout << "Projection fails" << endl;
+        return false;
+      }
 
-      if (p.SquareDistance(x) <= sqr(PROJECTION_TOLERANCE)) return true;
-
-      gp_Vec du, dv;
-
-      surface->D1(u,v,x,du,dv);
-
-      int count = 0;
-
-      gp_Pnt xold;
-      gp_Vec n;
-      double det, lambda, mu;
-
-      do {
-         count++;
-
-         n = du^dv;
-
-         det = Det3 (n.X(), du.X(), dv.X(),
-            n.Y(), du.Y(), dv.Y(),
-            n.Z(), du.Z(), dv.Z());
-
-         if (det < 1e-15) return false;
-
-         lambda = Det3 (n.X(), p.X()-x.X(), dv.X(),
-            n.Y(), p.Y()-x.Y(), dv.Y(),
-            n.Z(), p.Z()-x.Z(), dv.Z())/det;
-
-         mu     = Det3 (n.X(), du.X(), p.X()-x.X(),
-            n.Y(), du.Y(), p.Y()-x.Y(),
-            n.Z(), du.Z(), p.Z()-x.Z())/det;
-
-         u += lambda;
-         v += mu;
-
-         xold = x;
-         surface->D1(u,v,x,du,dv);
-
-      } while (xold.SquareDistance(x) > sqr(PROJECTION_TOLERANCE) && count < 50);
-
-      //    (*testout) << "FastProject count: " << count << endl;
-
-      if (count == 50) return false;
-
-      ap = Point<3> (x.X(), x.Y(), x.Z());
+      p = proj->Value(p2d);
+      p2d.Coord(u, v);
+      ap = Point<3> (p.X(), p.Y(), p.Z());
 
       return true;
    }
@@ -1038,9 +1095,9 @@ namespace netgen
    {
       cout << "writing stl..."; cout.flush();
       StlAPI_Writer writer;
-      writer.RelativeMode() = Standard_False;
+      //writer.RelativeMode() = Standard_False;
 
-      writer.SetDeflection(0.02);
+      //writer.SetDeflection(0.02);
       writer.Write(shape,filename);
 
       cout << "done" << endl;
@@ -1059,10 +1116,10 @@ namespace netgen
       occgeo = new OCCGeometry;
 
       // Initiate a dummy XCAF Application to handle the IGES XCAF Document
-      static Handle_XCAFApp_Application dummy_app = XCAFApp_Application::GetApplication();
+      static Handle(XCAFApp_Application) dummy_app = XCAFApp_Application::GetApplication();
 
       // Create an XCAF Document to contain the IGES file itself
-      Handle_TDocStd_Document iges_doc;
+      Handle(TDocStd_Document) iges_doc;
 
       // Check if a IGES File is already open under this handle, if so, close it to prevent
       // Segmentation Faults when trying to create a new document
@@ -1089,8 +1146,8 @@ namespace netgen
       reader.Transfer(iges_doc);
 
       // Read in the shape(s) and the colours present in the IGES File
-      Handle_XCAFDoc_ShapeTool iges_shape_contents = XCAFDoc_DocumentTool::ShapeTool(iges_doc->Main());
-      Handle_XCAFDoc_ColorTool iges_colour_contents = XCAFDoc_DocumentTool::ColorTool(iges_doc->Main());
+      Handle(XCAFDoc_ShapeTool) iges_shape_contents = XCAFDoc_DocumentTool::ShapeTool(iges_doc->Main());
+      Handle(XCAFDoc_ColorTool) iges_colour_contents = XCAFDoc_DocumentTool::ColorTool(iges_doc->Main());
 
       TDF_LabelSequence iges_shapes;
       iges_shape_contents->GetShapes(iges_shapes);
@@ -1137,10 +1194,10 @@ namespace netgen
       occgeo = new OCCGeometry;
 
       // Initiate a dummy XCAF Application to handle the STEP XCAF Document
-      static Handle_XCAFApp_Application dummy_app = XCAFApp_Application::GetApplication();
+      static Handle(XCAFApp_Application) dummy_app = XCAFApp_Application::GetApplication();
 
       // Create an XCAF Document to contain the STEP file itself
-      Handle_TDocStd_Document step_doc;
+      Handle(TDocStd_Document) step_doc;
 
       // Check if a STEP File is already open under this handle, if so, close it to prevent
       // Segmentation Faults when trying to create a new document
@@ -1167,8 +1224,8 @@ namespace netgen
       reader.Transfer(step_doc);
 
       // Read in the shape(s) and the colours present in the STEP File
-      Handle_XCAFDoc_ShapeTool step_shape_contents = XCAFDoc_DocumentTool::ShapeTool(step_doc->Main());
-      Handle_XCAFDoc_ColorTool step_colour_contents = XCAFDoc_DocumentTool::ColorTool(step_doc->Main());
+      Handle(XCAFDoc_ShapeTool) step_shape_contents = XCAFDoc_DocumentTool::ShapeTool(step_doc->Main());
+      Handle(XCAFDoc_ColorTool) step_colour_contents = XCAFDoc_DocumentTool::ColorTool(step_doc->Main());
 
       TDF_LabelSequence step_shapes;
       step_shape_contents->GetShapes(step_shapes);
@@ -1221,7 +1278,7 @@ namespace netgen
       // Fixed a bug in the OpenCascade XDE Colour handling when 
       // opening BREP Files, since BREP Files have no colour data.
       // Hence, the face_colours Handle needs to be created as a NULL handle.
-      occgeo->face_colours = Handle_XCAFDoc_ColorTool();
+      occgeo->face_colours = Handle(XCAFDoc_ColorTool)();
       occgeo->face_colours.Nullify();
       occgeo->changed = 1;
       occgeo->BuildFMap();

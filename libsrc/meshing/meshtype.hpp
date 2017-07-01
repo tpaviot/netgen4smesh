@@ -15,6 +15,7 @@ namespace netgen
     Classes for NETGEN
   */
 
+class Mesh; // added due to compilation errors on some platforms
 
 
   enum ELEMENT_TYPE { 
@@ -360,7 +361,7 @@ namespace netgen
         {
 #ifdef DEBUG
           if (typ != QUAD && typ != QUAD6 && typ != QUAD8)
-            PrintSysError ("element2d::GetNV not implemented for typ", typ)
+            PrintSysError ("element2d::GetNV not implemented for typ", typ);
 #endif
           return 4;
         }
@@ -618,7 +619,7 @@ namespace netgen
 	  return 8;
 	default:
 #ifdef DEBUG
-	  PrintSysError ("Element3d::GetNV not implemented for typ ", typ)
+	  PrintSysError ("Element3d::GetNV not implemented for typ ", typ);
 #endif
 	    ;
 	}
@@ -682,7 +683,7 @@ namespace netgen
 	case PRISM12: return 5;
 	default:
 #ifdef DEBUG
-	  PrintSysError ("element3d::GetNFaces not implemented for typ", typ)
+	  PrintSysError ("element3d::GetNFaces not implemented for typ", typ);
 #endif
 	    ;
 	}

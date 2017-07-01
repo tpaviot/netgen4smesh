@@ -8,7 +8,7 @@ revolution.hpp spline3d.hpp vscsg.hpp
 AM_CPPFLAGS = -I$(top_srcdir)/libsrc/include  $(TCL_INCLUDES)
 METASOURCES = AUTO
 
-lib_LTLIBRARIES = libcsg.la
+noinst_LTLIBRARIES = libcsg.la
 
 
 libcsg_la_SOURCES = algprim.cpp brick.cpp   \
@@ -17,12 +17,9 @@ explicitcurve2d.cpp extrusion.cpp gencyl.cpp genmesh.cpp identify.cpp  \
 manifold.cpp meshsurf.cpp polyhedra.cpp revolution.cpp singularref.cpp \
 solid.cpp specpoin.cpp spline3d.cpp surface.cpp triapprox.cpp
 
-libcsg_la_LIBADD =  $(top_builddir)/libsrc/meshing/libmesh.la
-
-
 
 if NGGUI
-lib_LTLIBRARIES += libcsgvis.la 
+lib_LTLIBRARIES = libcsgvis.la 
 
 libcsgvis_la_SOURCES = vscsg.cpp csgpkg.cpp
 libcsgvis_la_LIBADD = libcsg.la

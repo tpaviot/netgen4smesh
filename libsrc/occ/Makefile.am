@@ -14,10 +14,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/libsrc/include  $(OCCFLAGS) $(TCL_INCLUDES)
 
 METASOURCES = AUTO
 
-lib_LTLIBRARIES = libocc.la
+noinst_LTLIBRARIES = libocc.la
 
 if NGGUI
-lib_LTLIBRARIES += liboccvis.la 
+lib_LTLIBRARIES = liboccvis.la 
 endif
 
 
