@@ -18,9 +18,11 @@ requirements:
     - ninja
     - cmake
     - oce ==0.18.1
+    - zlib
 
   run:
     - oce ==0.18.1
+    - zlib
 
 about:
   home: https://github.com/tpaviot/netgen4smesh

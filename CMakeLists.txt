@@ -19,7 +19,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8 FATAL_ERROR)
 INCLUDE(CMakeDependentOption)
 
-PROJECT(netgen C CXX)
+PROJECT(netgen4smesh C CXX)
 
 # Ensure a proper linker behavior:
 CMAKE_POLICY(SET CMP0003 NEW)
@@ -38,10 +38,59 @@ SET(${PROJECT_NAME_UC}_VERSION
 # Common CMake macros
 # ===================
 LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-# Detect platform
-INCLUDE(FindPLATFORM)
 # Detect OCCT
 INCLUDE(FindCAS)
+# Detect ZLIB
+FIND_PACKAGE(ZLIB)
+
+############################
+# Default to release build #
+############################
+if(NOT DEFINED CMAKE_BUILD_TYPE )
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+message(STATUS "Built type will be ${CMAKE_BUILD_TYPE}")
+
+############################
+# Check 32/64 bit platform #
+############################
+if(${CMAKE_SIZEOF_VOID_P} MATCHES "8") # It is 64bit, 32 bit systems returns 4
+    add_definitions(-D_OCC64)
+    message(STATUS "Build 64bit")
+else()
+    message(STATUS "Build 32bit")
+endif()
+
+IF(MSVC)
+  ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)  # To disable windows warnings for strcpy, fopen, ...
+  ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)  # To disable windows warnings std::copy, std::transform, 
+  ADD_DEFINITIONS(-DWNT -DWIN32)
+  ADD_DEFINITIONS(-DPPRO_NT) # For medfile
+  ADD_DEFINITIONS(-D_USE_MATH_DEFINES) # At least for MEDMEM
+ENDIF(MSVC)
+
+##############################
+# Specific Appe OSX settings #
+##############################
+if(APPLE)
+    SET(CMAKE_MACOSX_RPATH ON)
+    # use, i.e. don't skip the full RPATH for the build tree
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+    # when building, don't use the install RPATH already
+    # (but later on when installing)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    # add the automatically determined parts of the RPATH
+    # which point to directories outside the build tree to the install RPATH
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    # the RPATH to be used when installing, but only if it's not a system directory
+    LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+    IF("${isSystemDir}" STREQUAL "-1")
+       SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    ENDIF("${isSystemDir}" STREQUAL "-1")
+    # link to libc++
+    #add_definitions("-stdlib=libc++") ONLY FOR XCODE 8 and upper
+endif(APPLE)
 
 # Common definitions
 # ==================
@@ -49,13 +98,6 @@ ADD_DEFINITIONS(-DNO_PARALLEL_THREADS)
 ADD_DEFINITIONS(-DOCCGEOMETRY)
 ADD_DEFINITIONS(-DPACKAGE_VERSION="5.3.1")
 
-# Target directories
-SET(NETGEN_INSTALL_BINS "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Install path: netgen binaries")
-SET(NETGEN_INSTALL_LIBS "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Install path: netgen libs")
-SET(NETGEN_INSTALL_HEADERS "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "Install path: netgen headers")
-SET(NETGEN_INSTALL_CMAKE "${CMAKE_INSTALL_PREFIX}/cmake" CACHE PATH "Install path: netgen cmake files")
-
 # Sub-directories
 ADD_SUBDIRECTORY(nglib)
-ADD_SUBDIRECTORY(cmake)
 
