@@ -26,10 +26,10 @@ namespace netgen
 DLL_HEADER extern ostream * testout;
 
 /** use instead of cout */
-extern ostream * mycout;
+DLL_HEADER extern ostream * mycout;
 
 /** error output stream */
-extern ostream * myerr;
+DLL_HEADER extern ostream * myerr;
 
 /** Error messages display.
   Error messages are displayed by this function */

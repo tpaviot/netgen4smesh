@@ -323,19 +323,19 @@ namespace netgen
 
   public:
     ///
-    Element2d ();
+    DLL_HEADER Element2d ();
     ///
-    Element2d (int anp);
+    DLL_HEADER Element2d (int anp);
     ///
     DLL_HEADER Element2d (ELEMENT_TYPE type);
     ///
-    Element2d (int pi1, int pi2, int pi3);
+    DLL_HEADER Element2d (int pi1, int pi2, int pi3);
     ///
-    Element2d (int pi1, int pi2, int pi3, int pi4);
+    DLL_HEADER Element2d (int pi1, int pi2, int pi3, int pi4);
     ///
-    ELEMENT_TYPE GetType () const { return typ; }
+    DLL_HEADER ELEMENT_TYPE GetType () const { return typ; }
     /// 
-    void SetType (ELEMENT_TYPE atyp)
+    DLL_HEADER  void SetType (ELEMENT_TYPE atyp)
     {
       typ = atyp;
       switch (typ)
@@ -350,9 +350,9 @@ namespace netgen
 	}
     }
     ///
-    int GetNP() const { return np; }
+    DLL_HEADER int GetNP() const { return np; }
     ///
-    int GetNV() const
+    DLL_HEADER int GetNV() const
     {
       if (typ == TRIG || typ == TRIG6)
         return 3;
@@ -384,95 +384,95 @@ namespace netgen
     }
 
     ///
-    PointIndex & operator[] (int i) { return pnum[i]; }
+    DLL_HEADER  PointIndex & operator[] (int i) { return pnum[i]; }
     ///
-    const PointIndex & operator[] (int i) const { return pnum[i]; }
+    DLL_HEADER  const PointIndex & operator[] (int i) const { return pnum[i]; }
 
-    FlatArray<const PointIndex> PNums () const 
+    DLL_HEADER  FlatArray<const PointIndex> PNums () const 
     { return FlatArray<const PointIndex> (np, &pnum[0]); }
     
     ///
-    PointIndex & PNum (int i) { return pnum[i-1]; }
+    DLL_HEADER  PointIndex & PNum (int i) { return pnum[i-1]; }
     ///
-    const PointIndex & PNum (int i) const { return pnum[i-1]; }
+    DLL_HEADER  const PointIndex & PNum (int i) const { return pnum[i-1]; }
     ///
-    PointIndex & PNumMod (int i) { return pnum[(i-1) % np]; }
+    DLL_HEADER  PointIndex & PNumMod (int i) { return pnum[(i-1) % np]; }
     ///
-    const PointIndex & PNumMod (int i) const { return pnum[(i-1) % np]; }
+    DLL_HEADER  const PointIndex & PNumMod (int i) const { return pnum[(i-1) % np]; }
     ///
 
     ///
-    PointGeomInfo & GeomInfoPi (int i) { return geominfo[i-1]; }
+    DLL_HEADER  PointGeomInfo & GeomInfoPi (int i) { return geominfo[i-1]; }
     ///
-    const PointGeomInfo & GeomInfoPi (int i) const { return geominfo[i-1]; }
+    DLL_HEADER  const PointGeomInfo & GeomInfoPi (int i) const { return geominfo[i-1]; }
     ///
-    PointGeomInfo & GeomInfoPiMod (int i) { return geominfo[(i-1) % np]; }
+    DLL_HEADER  PointGeomInfo & GeomInfoPiMod (int i) { return geominfo[(i-1) % np]; }
     ///
-    const PointGeomInfo & GeomInfoPiMod (int i) const { return geominfo[(i-1) % np]; }
+    DLL_HEADER  const PointGeomInfo & GeomInfoPiMod (int i) const { return geominfo[(i-1) % np]; }
 
 
-    void SetIndex (int si) { index = si; }
+    DLL_HEADER  void SetIndex (int si) { index = si; }
     ///
-    int GetIndex () const { return index; }
+    DLL_HEADER  int GetIndex () const { return index; }
 
-    int GetOrder () const { return orderx; }
-    void SetOrder (int aorder) { orderx = ordery = aorder; }
+    DLL_HEADER  int GetOrder () const { return orderx; }
+    DLL_HEADER  void SetOrder (int aorder) { orderx = ordery = aorder; }
 
 
-    void GetOrder (int & ox, int & oy) const { ox = orderx, oy =ordery;};
-    void GetOrder (int & ox, int & oy, int & oz) const { ox = orderx; oy = ordery; oz=0; }
-    void SetOrder (int ox, int oy, int  /* oz */) { orderx = ox; ordery = oy;}
-    void SetOrder (int ox, int oy) { orderx = ox; ordery = oy;}
+    DLL_HEADER  void GetOrder (int & ox, int & oy) const { ox = orderx, oy =ordery;};
+    DLL_HEADER  void GetOrder (int & ox, int & oy, int & oz) const { ox = orderx; oy = ordery; oz=0; }
+    DLL_HEADER  void SetOrder (int ox, int oy, int  /* oz */) { orderx = ox; ordery = oy;}
+    DLL_HEADER  void SetOrder (int ox, int oy) { orderx = ox; ordery = oy;}
 
 
     ///
-    void GetBox (const T_POINTS & points, Box3d & box) const;
+    DLL_HEADER  void GetBox (const T_POINTS & points, Box3d & box) const;
     /// invert orientation
-    inline void Invert ();
+    DLL_HEADER  inline void Invert ();
     ///
-    void Invert2 ();
+    DLL_HEADER  void Invert2 ();
     /// first point number is smallest
-    inline void NormalizeNumbering ();
+    DLL_HEADER  inline void NormalizeNumbering ();
     ///
-    void NormalizeNumbering2 ();
+    DLL_HEADER  void NormalizeNumbering2 ();
 
-    bool BadElement() const { return badel; }
+    DLL_HEADER  bool BadElement() const { return badel; }
 
     // friend ostream & operator<<(ostream  & s, const Element2d & el);
     friend class Mesh;
 
 
     /// get number of 'integration points'
-    int GetNIP () const;
-    void GetIntegrationPoint (int ip, Point2d & p, double & weight) const;
+    DLL_HEADER  int GetNIP () const;
+    DLL_HEADER  void GetIntegrationPoint (int ip, Point2d & p, double & weight) const;
 
-    void GetTransformation (int ip, const Array<Point2d> & points,
+    DLL_HEADER  void GetTransformation (int ip, const Array<Point2d> & points,
 			    class DenseMatrix & trans) const;
-    void GetTransformation (int ip, class DenseMatrix & pmat,
+    DLL_HEADER  void GetTransformation (int ip, class DenseMatrix & pmat,
 			    class DenseMatrix & trans) const;
 
-    void GetShape (const Point2d & p, class Vector & shape) const;
-    void GetShapeNew (const Point<2> & p, class FlatVector & shape) const;
+    DLL_HEADER  void GetShape (const Point2d & p, class Vector & shape) const;
+    DLL_HEADER  void GetShapeNew (const Point<2> & p, class FlatVector & shape) const;
     /// matrix 2 * np
-    void GetDShape (const Point2d & p, class DenseMatrix & dshape) const;
-    void GetDShapeNew (const Point<2> & p, class MatrixFixWidth<2> & dshape) const;
+    DLL_HEADER  void GetDShape (const Point2d & p, class DenseMatrix & dshape) const;
+    DLL_HEADER  void GetDShapeNew (const Point<2> & p, class MatrixFixWidth<2> & dshape) const;
     /// matrix 2 * np
-    void GetPointMatrix (const Array<Point2d> & points,
+    DLL_HEADER  void GetPointMatrix (const Array<Point2d> & points,
 			 class DenseMatrix & pmat) const; 
 
-    void ComputeIntegrationPointData () const;
+    DLL_HEADER  void ComputeIntegrationPointData () const;
   
 
-    double CalcJacobianBadness (const Array<Point2d> & points) const;
-    double CalcJacobianBadness (const T_POINTS & points, 
+    DLL_HEADER  double CalcJacobianBadness (const Array<Point2d> & points) const;
+    DLL_HEADER  double CalcJacobianBadness (const T_POINTS & points, 
 				const Vec<3> & n) const;
-    double CalcJacobianBadnessDirDeriv (const Array<Point2d> & points,
+    DLL_HEADER  double CalcJacobianBadnessDirDeriv (const Array<Point2d> & points,
 					int pi, Vec2d & dir, double & dd) const;
 
 
 
-    void Delete () { deleted = 1; pnum[0] = pnum[1] = pnum[2] = pnum[3] = PointIndex::BASE-1; }
-    bool IsDeleted () const 
+    DLL_HEADER  void Delete () { deleted = 1; pnum[0] = pnum[1] = pnum[2] = pnum[3] = PointIndex::BASE-1; }
+    DLL_HEADER  bool IsDeleted () const 
     {
 #ifdef DEBUG
       if (pnum[0] < PointIndex::BASE && !deleted)
@@ -483,40 +483,40 @@ namespace netgen
 
     // Philippose - 08 August 2010
     // Access functions for the new property: visible
-    void Visible(bool vis = 1) 
+    DLL_HEADER  void Visible(bool vis = 1) 
     { visible = vis; }
-    bool IsVisible () const 
+    DLL_HEADER  bool IsVisible () const 
     { return visible; }
    
-    void SetRefinementFlag (bool rflag = 1) 
+    DLL_HEADER  void SetRefinementFlag (bool rflag = 1) 
     { refflag = rflag; }
-    bool TestRefinementFlag () const
+    DLL_HEADER  bool TestRefinementFlag () const
     { return refflag; }
 
-    void SetStrongRefinementFlag (bool rflag = 1) 
+    DLL_HEADER  void SetStrongRefinementFlag (bool rflag = 1) 
     { strongrefflag = rflag; }
-    bool TestStrongRefinementFlag () const
+    DLL_HEADER  bool TestStrongRefinementFlag () const
     { return strongrefflag; }
 
   
-    SurfaceElementIndex NextElement() { return next; }
+    DLL_HEADER  SurfaceElementIndex NextElement() { return next; }
 
-    bool operator==(const Element2d & el2) const;
+    DLL_HEADER  bool operator==(const Element2d & el2) const;
 
-    int HasFace(const Element2d& el) const;
+    DLL_HEADER  int HasFace(const Element2d& el) const;
     ///
     int meshdocval;
     ///
     int hp_elnr;
 
 #ifdef PARALLEL
-    int GetPartition () const { return partitionNumber; }
-    void SetPartition (int nr) { partitionNumber = nr; }; 
+    DLL_HEADER  int GetPartition () const { return partitionNumber; }
+    DLL_HEADER  void SetPartition (int nr) { partitionNumber = nr; }; 
 #endif
   };
 
 
-  ostream & operator<<(ostream  & s, const Element2d & el);
+  DLL_HEADER ostream & operator<<(ostream  & s, const Element2d & el);
 
 
 

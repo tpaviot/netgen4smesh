@@ -8,10 +8,12 @@
 /* Date:   01. Okt. 95                                                    */
 /**************************************************************************/
 
+#include <myadt.hpp>
+
 namespace netgen
 {
 
-  extern DLL_HEADER MeshingParameters mparam;
+  DLL_HEADER extern MeshingParameters mparam;
 
   /*
 

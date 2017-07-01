@@ -9,6 +9,8 @@
 
 #ifdef OCCGEOMETRY
 
+#include <myadt.hpp>
+
 #include <meshing.hpp>
 
 #include "BRep_Tool.hxx"
@@ -114,7 +116,7 @@ namespace netgen
 {
 #include "occmeshsurf.hpp"
 
-  extern DLL_HEADER MeshingParameters mparam;
+  DLL_HEADER extern MeshingParameters mparam;
 
 #define PROJECTION_TOLERANCE 1e-10
 
@@ -189,7 +191,7 @@ namespace netgen
 
 
 
-   class OCCGeometry : public NetgenGeometry
+   class DLL_HEADER OCCGeometry : public NetgenGeometry
    {
       Point<3> center;
 
@@ -395,7 +397,7 @@ namespace netgen
 
 
 
-   class OCCParameters
+   class DLL_HEADER OCCParameters
    {
    public:
 
@@ -435,21 +437,21 @@ namespace netgen
    OCCGeometry * LoadOCC_STEP (const char * filename);
    OCCGeometry * LoadOCC_BREP (const char * filename);
 
-   extern OCCParameters occparam;
+   extern DLL_HEADER OCCParameters occparam;
 
 
    // Philippose - 31.09.2009
    // External access to the mesh generation functions within the OCC
    // subsystem (Not sure if this is the best way to implement this....!!)
-   extern int OCCGenerateMesh (OCCGeometry & occgeometry, Mesh*& mesh,
+   extern DLL_HEADER int OCCGenerateMesh (OCCGeometry & occgeometry, Mesh*& mesh,
 			       MeshingParameters & mparam,
 			       int perfstepsstart, int perfstepsend);
 
-  extern void OCCSetLocalMeshSize(OCCGeometry & geom, Mesh & mesh);
+  extern DLL_HEADER void OCCSetLocalMeshSize(OCCGeometry & geom, Mesh & mesh);
 
-   extern void OCCMeshSurface (OCCGeometry & geom, Mesh & mesh, int perfstepsend);
+   extern DLL_HEADER void OCCMeshSurface (OCCGeometry & geom, Mesh & mesh, int perfstepsend);
 
-   extern void OCCFindEdges (OCCGeometry & geom, Mesh & mesh);
+   extern DLL_HEADER void OCCFindEdges (OCCGeometry & geom, Mesh & mesh);
 }
 
 #endif

@@ -66,6 +66,7 @@ namespace metis { extern "C" {
 #  ifdef MSVC_EXPRESS
 #   include <pthread.h>
 #  else
+    #define _AFXDLL
 #   include <afxwin.h>
 #   include <afxmt.h>
 #  endif // MSVC_EXPRESS

@@ -1,3 +1,16 @@
+#ifdef _MSC_VER
+#ifndef MSVC_EXPRESS
+
+#define _AFXDLL
+
+#include <Afxwin.h>
+#include <winsock2.h>
+#include <winsock.h>
+#include <windows.h>
+
+#endif
+#endif
+
 #include <mystdlib.h>
 
 #include <meshing.hpp>
@@ -10,7 +23,6 @@
 
 #include "nginterface.h"
 #include "../visualization/soldata.hpp"
-
 
 #ifdef _MSC_VER
 // Philippose - 30/01/2009

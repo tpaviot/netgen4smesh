@@ -38,7 +38,7 @@ namespace netgen
     return true;
   }
   
-  extern DLL_HEADER MeshingParameters mparam;
+  DLL_HEADER extern MeshingParameters mparam;
   
 
 
