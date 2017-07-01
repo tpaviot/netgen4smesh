@@ -27,7 +27,7 @@ CMAKE_POLICY(SET CMP0003 NEW)
 # Versioning
 # ===========
 # Project name, upper case
-STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
+STRING(TOUPPER ${PROJECT_NAME} NETGEN4SMESH)
 
 SET(${PROJECT_NAME_UC}_MAJOR_VERSION 5)
 SET(${PROJECT_NAME_UC}_MINOR_VERSION 3)
@@ -42,21 +42,6 @@ LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 INCLUDE(FindPLATFORM)
 # Detect OCCT
 INCLUDE(FindCAS)
-
-# Detect ZLIB on Windows
-IF(WIN32)
-  SET(ZLIB_ROOT_DIR $ENV{ZLIB_ROOT_DIR})
-  IF(EXISTS ${ZLIB_ROOT_DIR})
-    SET(ZLIB_ROOT ${ZLIB_ROOT_DIR})
-    INCLUDE(FindZLIB)
-    IF (NOT ${ZLIB_FOUND})
-      MESSAGE(FATAL_ERROR "We absolutely need the zlib library, please check zlib installation !")
-    ENDIF()
-  ELSE()
-    MESSAGE(FATAL_ERROR "We absolutely need the zlib library, please define ZLIB_ROOT_DIR !")
-  ENDIF()
-ENDIF()
-
 
 # Common definitions
 # ==================
