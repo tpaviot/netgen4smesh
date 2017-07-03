@@ -72,8 +72,10 @@ void RunParallel ( void* (*fun)(void *), void * in)
 
 #else  // For #ifdef _MSC_VER
 
-// #include <pthread.h>
- 
+#if (defined(__MINGW32__) || defined(__MINGW64__))
+  #include <pthread.h>
+#endif
+
 static pthread_t meshingthread;
 void RunParallel ( void * (*fun)(void *), void * in)
 {
